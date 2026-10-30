@@ -1,0 +1,97 @@
+name: noNotch
+options:
+  bundleIdPrefix: com.ganeshsingare
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    # Stable local identity (scripts/setup-signing.sh) so macOS keeps permissions across builds.
+    CODE_SIGN_IDENTITY: "GeniusSoft Development"
+    CODE_SIGN_STYLE: Manual
+    OTHER_CODE_SIGN_FLAGS: --timestamp=none
+    ENABLE_HARDENED_RUNTIME: NO
+targets:
+  noNotch:
+    type: application
+    platform: macOS
+    sources:
+      - path: noNotch
+      - path: Vendor/MediaRemoteAdapter/bin/mediaremote-adapter.pl
+        buildPhase: resources
+    dependencies:
+      - target: MediaRemoteAdapter
+        embed: true
+    info:
+      path: noNotch/Info.plist
+      properties:
+        CFBundleDisplayName: noNotch
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        LSMinimumSystemVersion: "14.0"
+        NSHumanReadableCopyright: "© 2026 GeniusSoft™. All rights reserved. noNotch™ is a trademark of GeniusSoft."
+        NSCalendarsFullAccessUsageDescription: noNotch shows your next event and meeting links in the notch.
+        NSCalendarsUsageDescription: noNotch shows your next event and meeting links in the notch.
+        NSAppleEventsUsageDescription: noNotch controls Music, Spotify and system appearance from the notch.
+        NSBluetoothAlwaysUsageDescription: noNotch shows when AirPods and other Bluetooth devices connect.
+        NSLocationUsageDescription: noNotch shows the weather where you are.
+        NSLocationWhenInUseUsageDescription: noNotch shows the weather where you are.
+        NSCameraUsageDescription: noNotch shows a quick mirror so you can check yourself before a call.
+    entitlements:
+      path: noNotch/noNotch.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.automation.apple-events: true
+        com.apple.security.personal-information.calendars: true
+        com.apple.security.personal-information.location: true
+        com.apple.security.device.camera: true
+    scheme:
+      testTargets:
+        - noNotchTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ganeshsingare.noNotch
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_VERSION: "6.0"
+        SWIFT_STRICT_CONCURRENCY: complete
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  noNotchTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: noNotchTests
+    dependencies:
+      - target: noNotch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ganeshsingare.noNotchTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "6.0"
+        SWIFT_STRICT_CONCURRENCY: complete
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/noNotch.app/Contents/MacOS/noNotch
+        BUNDLE_LOADER: $(TEST_HOST)
+
+  # Vendored from github.com/ungive/mediaremote-adapter (BSD-3-Clause).
+  # Loaded by /usr/bin/perl so now-playing works on macOS 15.4+.
+  MediaRemoteAdapter:
+    type: framework
+    platform: macOS
+    sources:
+      - path: Vendor/MediaRemoteAdapter/src/adapter
+      - path: Vendor/MediaRemoteAdapter/src/private
+      - path: Vendor/MediaRemoteAdapter/src/utility
+      - path: Vendor/MediaRemoteAdapter/include
+        headerVisibility: public
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vandenbe.MediaRemoteAdapter
+        GENERATE_INFOPLIST_FILE: YES
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Vendor/MediaRemoteAdapter/include $(SRCROOT)/Vendor/MediaRemoteAdapter/src
+        CLANG_ENABLE_OBJC_ARC: YES
+        GCC_WARN_INHIBIT_ALL_WARNINGS: YES
+        OTHER_LDFLAGS: -framework Foundation -framework AppKit -framework UniformTypeIdentifiers
+        DEFINES_MODULE: NO
+        SKIP_INSTALL: YES

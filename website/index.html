@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>noNotch: your notch, reimagined</title>
+  <meta name="author" content="GeniusSoft">
+  <meta name="description" content="noNotch turns the MacBook notch into a living Dynamic Island: music and video, notifications, live activities, quick controls, notes, shelf and more. Free for macOS.">
+  <meta property="og:title" content="noNotch: your notch, reimagined">
+  <meta property="og:description" content="A Dynamic Island for your Mac. Music, notifications, live activities and quick controls, right in the notch.">
+  <meta property="og:image" content="assets/icon_1024.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon_256.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top">
+      <img src="assets/icon_256.png" alt="" width="28" height="28">
+      <span>noNotch</span>
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#displays">Displays</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="icon-link" href="https://github.com/geniussingare/NoNotch" aria-label="noNotch on GitHub"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+    <a class="button small" href="#download">Download</a>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <p class="eyebrow">Free for macOS</p>
+      <h1>Your notch,<br><span class="accent-text">reimagined.</span></h1>
+      <p class="lede">noNotch turns the cut-out at the top of your MacBook into a living Dynamic Island. Music, notifications, live activities and quick controls appear exactly where your eyes already are.</p>
+      <div class="cta">
+        <a class="button" href="#download">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.3 1.2 9.7.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.6-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
+          Download for Mac
+        </a>
+        <a class="button ghost" href="#features">See what it does</a>
+      </div>
+      <p class="fine">macOS 14 Sonoma or later · Apple Silicon &amp; Intel · Works on any display</p>
+
+      <!-- Interactive demo -->
+      <div class="mac" aria-label="Animated preview of noNotch">
+        <div class="screen">
+          <div class="wallpaper"></div>
+          <div class="menubar">
+            <span class="apple"></span><b>Finder</b><span>File</span><span>Edit</span><span>View</span><span>Go</span>
+            <span class="right">Fri 9:41 AM</span>
+          </div>
+
+          <div class="island" id="island" data-state="idle" tabindex="0" role="button" aria-label="Try the island">
+            <!-- compact: music wings -->
+            <div class="layer compact-music">
+              <div class="art"></div>
+              <div class="bars"><i></i><i></i><i></i><i></i></div>
+            </div>
+            <!-- compact: charging -->
+            <div class="layer compact-charge">
+              <svg class="bolt" viewBox="0 0 24 24" width="14" height="14" fill="#34d399" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><span class="pct">82%</span>
+            </div>
+            <!-- compact: volume HUD -->
+            <div class="layer compact-hud">
+              <svg class="speaker" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="#fff"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span class="meter"><i></i></span>
+            </div>
+            <!-- banner: notification -->
+            <div class="layer banner">
+              <div class="app-icon msg"></div>
+              <div class="text">
+                <div class="row"><b>Maya</b><span>Messages</span></div>
+                <p>Dinner at 8? I booked the place.</p>
+              </div>
+            </div>
+            <!-- expanded: now playing -->
+            <div class="layer expanded">
+              <div class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+              <div class="player">
+                <div class="cover"></div>
+                <div class="meta">
+                  <b>Midnight City</b>
+                  <span class="lyric">Waiting in a car, waiting for a ride in the dark</span>
+                  <div class="progress"><i></i></div>
+                  <div class="controls" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M19 20 9 12l10-8v16zM5 19V5h2v14z"/></svg><svg class="play" viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="m5 4 10 8-10 8V4zM17 5h2v14h-2z"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="hint">Hover the island · it cycles on its own too</p>
+        </div>
+        <div class="base"></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+      <p class="eyebrow">Everything, one glance away</p>
+      <h2>Small island. Big ideas.</h2>
+      <div class="bento">
+        <article class="card wide feature-media">
+          <div class="card-copy">
+            <h3>Now Playing, music <em>and</em> video</h3>
+            <p>Spotify, Apple Music, YouTube, Netflix, VLC, IINA. Artwork, scrubbing, AirPlay and ±15 s skips for video. Live, time-synced lyrics glide by line by line.</p>
+          </div>
+          <div class="visual mini-player">
+            <div class="cover"></div>
+            <div class="eq"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+          <h3>Notifications in the notch</h3>
+          <p>Messages, Slack and Mail banners grow out of the island, iOS-style, with a history one click away.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+          <h3>Live Activities</h3>
+          <p>Charging, AirPods, downloads, meetings, focus timers and eye-break reminders, all compact beside the notch.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span>
+          <h3>A better HUD</h3>
+          <p>Volume and brightness slide into the notch instead of the old square in the middle of your screen.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="16" cy="12" r="3"/></svg></span>
+          <h3>Quick controls</h3>
+          <p>Wi‑Fi, Bluetooth, Focus, Dark Mode, Keep Awake, sliders, screenshot, lock and a camera mirror.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span>
+          <h3>Shelf &amp; Clipboard</h3>
+          <p>Drop files on the notch to hold them, drag them out anywhere or AirDrop them. Recent copies are kept too.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+          <h3>Calendar &amp; Weather</h3>
+          <p>Your next meeting with a Join button, a month grid, and local weather at a glance.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <h3>Notes</h3>
+          <p>Jot something down without leaving what you're doing. Saved as you type.</p>
+        </article>
+        <article class="card wide feature-motion">
+          <div class="card-copy">
+            <h3>Liquid Glass, built in</h3>
+            <p>The open island is real Apple Liquid Glass that bends whatever is behind it, with glass controls that merge when pressed. Springs feel like iPhone, and everything runs on the GPU, so noNotch idles at 0% CPU.</p>
+          </div>
+          <div class="visual morph"><div class="blob"></div></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Displays -->
+    <section id="displays" class="section split">
+      <div>
+        <p class="eyebrow">No notch? No problem.</p>
+        <h2>A pull-cord for every display.</h2>
+        <p class="body">On external monitors and older Macs, noNotch hangs a tiny cord from the top of the screen. It sways when you get close. Give it a tug and the island drops down.</p>
+      </div>
+      <div class="cord-demo" id="cord">
+        <div class="menubar thin"></div>
+        <div class="cord"><i class="string"></i><i class="handle"></i></div>
+        <p class="hint">Drag it down</p>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section id="privacy" class="section">
+      <p class="eyebrow">Private by design</p>
+      <h2>Everything stays on your Mac.</h2>
+      <div class="pillars">
+        <div><h4>No accounts</h4><p>No sign-up, no tracking, no analytics.</p></div>
+        <div><h4>On-device</h4><p>Notifications, clipboard and notes never leave your Mac.</p></div>
+        <div><h4>Asked once</h4><p>Every permission is explained on first launch. Skip any you don't want.</p></div>
+        <div><h4>Lightweight</h4><p>A 2.7 MB download that idles at about 0% CPU.</p></div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section id="download" class="section download">
+      <img src="assets/icon_256.png" alt="noNotch app icon" width="128" height="128">
+      <h2>Get noNotch</h2>
+      <p class="body">Free. Version 0.1.0 · 2.7 MB · macOS 14 or later · Apple Silicon &amp; Intel.</p>
+      <div class="cta">
+        <a class="button large" href="https://github.com/geniussingare/NoNotch/releases/latest/download/noNotch-0.1.0.dmg">Download .dmg</a>
+        <a class="button ghost large" href="https://github.com/geniussingare/NoNotch"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg> View source</a>
+      </div>
+      <figure class="installer">
+        <img src="assets/dmg-preview.png" alt="The noNotch installer window: drag the noNotch icon onto the Applications folder." width="920" height="448" loading="lazy">
+        <figcaption>The installer. Drag noNotch onto Applications.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><b>Open</b> the downloaded <code>noNotch-0.1.0.dmg</code>.</li>
+        <li><b>Drag</b> noNotch onto the Applications folder.</li>
+        <li><b>Launch</b> it from Applications and allow the permissions on the welcome screen.</li>
+      </ol>
+      <p class="fine">First launch: if macOS says it can't verify the developer, right-click noNotch in Applications and choose <b>Open</b>.</p>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq">
+      <h2>Questions</h2>
+      <details><summary>Does it work without a notch?</summary><p>Yes. On external displays and Macs without a notch, noNotch uses a pull-cord at the top of the screen, and shows a floating island when there's something to show.</p></details>
+      <details><summary>Which players are supported?</summary><p>Anything that reports to macOS Now Playing: Apple Music, Spotify, Podcasts, YouTube and Netflix in Safari, Chrome, Arc, Brave or Firefox, plus VLC, IINA and QuickTime.</p></details>
+      <details><summary>Why does it need Accessibility?</summary><p>To show volume and brightness in the notch instead of the system HUD, and to mirror notification banners. noNotch only reads what's on screen in those banners; nothing is sent anywhere.</p></details>
+      <details><summary>Will it slow my Mac down?</summary><p>No. Animations run on the GPU and services are event-driven, so noNotch sits at about 0% CPU when idle.</p></details>
+      <details><summary>How do I quit or uninstall?</summary><p>Use the menu-bar icon → Quit. To uninstall, drag noNotch from Applications to the Trash.</p></details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="brand"><img src="assets/icon_256.png" alt="" width="22" height="22"><span>noNotch™</span><span class="maker">by GeniusSoft™</span></div>
+    <p><a href="https://github.com/geniussingare/NoNotch">Source on GitHub</a> · © 2026 GeniusSoft™. noNotch™ is a trademark of GeniusSoft. Now Playing uses <a href="https://github.com/ungive/mediaremote-adapter">mediaremote-adapter</a> (BSD-3-Clause).</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

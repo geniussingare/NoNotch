@@ -1,0 +1,8 @@
+*.xcodeproj/
+build/
+DerivedData/
+.DS_Store
+xcuserdata/
+dist/
+website/downloads/
+*.xcuserstate
