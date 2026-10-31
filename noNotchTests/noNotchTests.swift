@@ -357,6 +357,38 @@ final class WingSnapshotTests: XCTestCase {
     }
 }
 
+@MainActor
+final class MenuBarIconTests: XCTestCase {
+    /// Renders every icon state on light and dark menu bars (NONOTCH_SNAPSHOT_DIR) at 8× for review.
+    func testIconStatesRender() throws {
+        let states: [(String, MenuBarIcon.State, Bool)] = [
+            ("idle", .idle, false), ("alert", .idle, true),
+            ("focus", .focus(progress: 0.35, paused: false), false), ("paused", .focus(progress: 0.6, paused: true), false),
+        ]
+        let dir = ProcessInfo.processInfo.environment["NONOTCH_SNAPSHOT_DIR"]
+        for appearance in [NSAppearance.Name.aqua, .darkAqua] {
+            let scale: CGFloat = 8
+            let size = NSSize(width: (MenuBarIcon.size.width + 8) * CGFloat(states.count) * scale, height: (MenuBarIcon.size.height + 8) * scale)
+            let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(size.width), pixelsHigh: Int(size.height), bitsPerSample: 8,
+                                       samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+            NSAppearance(named: appearance)!.performAsCurrentDrawingAppearance {
+                (appearance == .aqua ? NSColor(white: 0.93, alpha: 1) : NSColor(white: 0.13, alpha: 1)).setFill()
+                NSRect(origin: .zero, size: size).fill()
+                for (index, state) in states.enumerated() {
+                    let image = MenuBarIcon.image(state.1, alert: state.2)
+                    let x = (CGFloat(index) * (MenuBarIcon.size.width + 8) + 4) * scale
+                    image.draw(in: NSRect(x: x, y: 4 * scale, width: MenuBarIcon.size.width * scale, height: MenuBarIcon.size.height * scale))
+                }
+            }
+            NSGraphicsContext.restoreGraphicsState()
+            let png = try XCTUnwrap(rep.representation(using: .png, properties: [:]))
+            if let dir { try png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("menubar-\(appearance == .aqua ? "light" : "dark").png")) }
+        }
+    }
+}
+
 // MARK: - Tasks
 
 final class TaskParserTests: XCTestCase {

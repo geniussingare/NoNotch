@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         viewModel.openSettings = { [weak self] in self?.showSettings() }
         notchController = NotchWindowController(viewModel: viewModel)
         menuBar = MenuBarController(
+            services: services,
             onToggle: { [weak self] in self?.viewModel.toggle() },
             onSettings: { [weak self] in self?.showSettings() }
         )
