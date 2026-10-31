@@ -6,3 +6,5 @@ xcuserdata/
 dist/
 website/downloads/
 *.xcuserstate
+marketing/ad/node_modules/
+marketing/ad/models/

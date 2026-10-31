@@ -77,7 +77,7 @@ struct HomeCard: Codable, Hashable, Identifiable {
 
     var width: CGFloat {
         switch kind {
-        case .clock: wide ? 132 : 96
+        case .clock: wide ? 140 : 112
         case .agenda: wide ? 190 : 150
         case .focus: wide ? 150 : 104
         case .tasks: wide ? 210 : 160

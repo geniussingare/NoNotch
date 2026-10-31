@@ -315,6 +315,48 @@ final class AllTabsSnapshotTests: XCTestCase {
     }
 }
 
+@MainActor
+final class WingSnapshotTests: XCTestCase {
+    /// Renders each new wing so alignment can be eyeballed (NONOTCH_SNAPSHOT_DIR).
+    func testNewWingsFitBesideTheNotch() throws {
+        let services = Services()
+        let model = NotchViewModel(services: services)
+        model.geometry = NotchGeometry(screenFrame: .zero, notchSize: CGSize(width: 185, height: 32), hasNotch: true)
+        let dir = ProcessInfo.processInfo.environment["NONOTCH_SNAPSHOT_DIR"]
+        services.focus.start(minutes: 25)
+        let cases: [(String, WingContent)] = [
+            ("focus", .focus),
+            ("welcome", .activity(.welcome)),
+            ("taskDue", .activity(.taskDue(id: UUID(), title: "Call mom"))),
+            ("done", .activity(.timerFinished("x"))),
+        ]
+        for (name, wing) in cases {
+            let width = 185 + wing.width * 2 + 12
+            let view = CollapsedWings(viewModel: model, wing: wing)
+                .padding(.horizontal, 6)
+                .frame(width: width, height: 32)
+                .background(.black)
+                .environment(\.colorScheme, .dark)
+            let renderer = ImageRenderer(content: view)
+            renderer.scale = 3
+            let image = try XCTUnwrap(renderer.nsImage)
+            XCTAssertEqual(image.size.height, 32, accuracy: 1, "\(name) wing grew taller")
+            if let dir, let tiff = image.tiffRepresentation,
+               let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) {
+                try png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("wing-\(name).png"))
+            }
+        }
+        services.focus.pause()
+        let paused = ImageRenderer(content: CollapsedWings(viewModel: model, wing: .focus).padding(.horizontal, 6).frame(width: 185 + 52 * 2 + 12, height: 32).background(.black))
+        paused.scale = 3
+        if let dir, let tiff = paused.nsImage?.tiffRepresentation,
+           let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) {
+            try png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("wing-paused.png"))
+        }
+        services.focus.reset()
+    }
+}
+
 // MARK: - Tasks
 
 final class TaskParserTests: XCTestCase {

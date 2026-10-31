@@ -37,6 +37,7 @@ else
   SIGN_ARGS+=(--timestamp=none)
 fi
 codesign "${SIGN_ARGS[@]}" "$STAGE/$APP_NAME.app/Contents/Frameworks/MediaRemoteAdapter.framework"
+codesign "${SIGN_ARGS[@]}" "$STAGE/$APP_NAME.app/Contents/Helpers/nonotch-mcp"
 codesign "${SIGN_ARGS[@]}" --entitlements "$APP_NAME/$APP_NAME.entitlements" "$STAGE/$APP_NAME.app"
 codesign --verify --deep --strict "$STAGE/$APP_NAME.app"
 

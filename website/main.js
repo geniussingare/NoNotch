@@ -5,11 +5,14 @@
 
   const sequence = [
     ["idle", 1400],
-    ["music", 2200],
+    ["tasks", 4200],
+    ["focus", 2400],
+    ["reminder", 3400],
+    ["music", 1800],
     ["expanded", 3400],
     ["music", 1400],
     ["banner", 3000],
-    ["music", 1200],
+    ["focus", 1600],
     ["hud", 1800],
     ["charge", 2200],
   ];
@@ -17,9 +20,29 @@
   let timer;
   let hovering = false;
   const meter = island.querySelector(".compact-hud .meter i");
+  const typed = island.querySelector(".tasks .typed");
+  const phrase = typed ? typed.textContent : "";
+  let typing;
+
+  // Types the composer phrase, then pops in the chips noNotch would parse from it.
+  const type = () => {
+    if (!typed) return;
+    clearInterval(typing);
+    island.classList.remove("typed-done");
+    let i = 0;
+    typed.textContent = "";
+    typing = setInterval(() => {
+      typed.textContent = phrase.slice(0, ++i);
+      if (i >= phrase.length) {
+        clearInterval(typing);
+        island.classList.add("typed-done");
+      }
+    }, 55);
+  };
 
   const set = (state) => {
     island.dataset.state = state;
+    if (state === "tasks") type();
     if (state === "hud" && meter) {
       meter.style.width = "40%";
       setTimeout(() => (meter.style.width = "75%"), 450);

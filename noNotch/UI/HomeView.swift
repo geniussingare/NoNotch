@@ -43,9 +43,19 @@ private struct ClockColumn: View {
     var body: some View {
         TimelineView(.everyMinute) { context in
             VStack(alignment: .leading, spacing: 2) {
-                Text(context.date, format: .dateTime.hour().minute())
-                    .font(Design.number(30, .semibold))
-                    .contentTransition(.numericText())
+                // 12-hour clocks put AM/PM in a small suffix so the time keeps its size.
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(context.date, format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute())
+                        .font(Design.number(30, .semibold))
+                        .contentTransition(.numericText())
+                    if let period = Self.period(context.date) {
+                        Text(period)
+                            .font(Design.text(11, .semibold))
+                            .foregroundStyle(Design.secondaryText)
+                    }
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
                 HStack(spacing: 4) {
                     Text(context.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
                         .font(Design.text(11.5))
@@ -69,7 +79,16 @@ private struct ClockColumn: View {
                 }
             }
         }
-        .fixedSize()
+    }
+
+    /// "AM"/"PM" when the user's locale uses a 12-hour clock.
+    private static func period(_ date: Date) -> String? {
+        let format = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: .current) ?? ""
+        guard format.contains("a") else { return nil }
+        let formatter = DateFormatter()
+        formatter.locale = .current
+        formatter.dateFormat = "a"
+        return formatter.string(from: date)
     }
 }
 
@@ -247,7 +266,7 @@ private struct FocusColumn: View {
         let today = tasks.today
         if today.isEmpty, linkedTask == nil {
             Button(action: addTask) {
-                Label("Add your first task", systemImage: "plus.circle.fill")
+                Label("Add a task", systemImage: "plus.circle.fill")
                     .font(Design.text(9.5, .semibold))
                     .foregroundStyle(Design.secondaryText)
                     .lineLimit(1)

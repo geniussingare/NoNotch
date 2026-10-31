@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>noNotch: your notch, reimagined</title>
   <meta name="author" content="GeniusSoft">
-  <meta name="description" content="noNotch turns the MacBook notch into a living Dynamic Island: music and video, notifications, live activities, quick controls, notes, shelf and more. Free for macOS.">
+  <meta name="description" content="noNotch turns the MacBook notch into a living Dynamic Island: tasks, focus timer, music and video, notifications, live activities, quick controls, and an MCP server for Claude. Free for macOS.">
   <meta property="og:title" content="noNotch: your notch, reimagined">
   <meta property="og:description" content="A Dynamic Island for your Mac. Music, notifications, live activities and quick controls, right in the notch.">
   <meta property="og:image" content="assets/icon_1024.png">
@@ -20,10 +20,12 @@
       <span>noNotch</span>
     </a>
     <nav>
+      <a href="#productivity">Tasks &amp; Focus</a>
       <a href="#features">Features</a>
       <a href="#displays">Displays</a>
       <a href="#privacy">Privacy</a>
       <a href="#faq">FAQ</a>
+      <a href="changelog.html">Changelog</a>
     </nav>
     <a class="icon-link" href="https://github.com/geniussingare/NoNotch" aria-label="noNotch on GitHub"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
     <a class="button small" href="#download">Download</a>
@@ -32,9 +34,9 @@
   <main id="top">
     <!-- Hero -->
     <section class="hero">
-      <p class="eyebrow">Free for macOS</p>
+      <a class="new-badge" href="changelog.html"><b>New in 0.2</b> Tasks, Focus, Reminders sync &amp; AI agents <span aria-hidden="true">→</span></a>
       <h1>Your notch,<br><span class="accent-text">reimagined.</span></h1>
-      <p class="lede">noNotch turns the cut-out at the top of your MacBook into a living Dynamic Island. Music, notifications, live activities and quick controls appear exactly where your eyes already are.</p>
+      <p class="lede">noNotch turns the cut-out at the top of your MacBook into a living Dynamic Island. Plan your day, run a focus timer, control music and see notifications, right where your eyes already are.</p>
       <div class="cta">
         <a class="button" href="#download">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.3 1.2 9.7.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.6-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
@@ -75,6 +77,30 @@
                 <p>Dinner at 8? I booked the place.</p>
               </div>
             </div>
+            <!-- compact: focus timer -->
+            <div class="layer compact-focus">
+              <span class="ring" aria-hidden="true"></span><span class="time">18:42</span>
+            </div>
+            <!-- reminder due: opens with Done / Snooze -->
+            <div class="layer reminder">
+              <div class="bell" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="#ffd60a"><path d="M12 2a6 6 0 0 0-6 6c0 6.5-3 8.5-3 8.5h18S18 14.5 18 8a6 6 0 0 0-6-6Zm-2 18a2 2 0 0 0 4 0Z"/></svg></div>
+              <div class="text">
+                <span class="tag">REMINDER</span>
+                <b>Call mom</b>
+                <span class="sub">Today 5:00 PM · #family</span>
+              </div>
+              <div class="actions"><span class="pill done">Done</span><span class="pill">Snooze 5 min</span></div>
+            </div>
+            <!-- expanded: tasks -->
+            <div class="layer tasks">
+              <div class="tabs"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+              <div class="composer"><span class="typed">call mom tomorrow 5pm</span><span class="chip yellow">Tomorrow 5:00 PM</span><span class="chip pink">#family</span></div>
+              <ul class="task-list">
+                <li><i class="check red"></i><span>Ship the 0.2 release</span><em>!high</em></li>
+                <li><i class="check done"></i><s>Review design notes</s></li>
+                <li><i class="check"></i><span>Water the plants</span><em class="repeat">every day</em></li>
+              </ul>
+            </div>
             <!-- expanded: now playing -->
             <div class="layer expanded">
               <div class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></div>
@@ -90,9 +116,71 @@
             </div>
           </div>
 
-          <p class="hint">Hover the island · it cycles on its own too</p>
+          <p class="hint">Hover the island · it cycles through tasks, focus, reminders and music on its own</p>
         </div>
         <div class="base"></div>
+      </div>
+    </section>
+
+    <!-- Productivity (new in 0.2) -->
+    <section id="productivity" class="section">
+      <p class="eyebrow">New in 0.2</p>
+      <h2>Your day, in the notch.</h2>
+      <div class="bento">
+        <article class="card wide feature-tasks">
+          <div class="card-copy">
+            <h3>Tasks that understand you</h3>
+            <p>Type “call mom tomorrow at 5pm every week #family !high” and noNotch sets the day, reminder, repeat, project and priority. Add steps and notes, plan ahead in Upcoming, and unfinished work rolls to today on its own.</p>
+          </div>
+          <div class="visual chips-demo">
+            <span class="chip yellow">Tomorrow 5:00 PM</span>
+            <span class="chip mint">↻ weekly</span>
+            <span class="chip red">⚑ high</span>
+            <span class="chip pink">#family</span>
+          </div>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+          <h3>Reminders that open the notch</h3>
+          <p>When a task is due, the island opens with a chime. Snooze it five minutes or tick it off, right there.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></span>
+          <h3>Focus timer</h3>
+          <p>Countdown or stopwatch, with or without a task. Add five minutes, pause, and it waits while your Mac sleeps. It stays beside the notch after you close it.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
+          <h3>Daily notepad</h3>
+          <p>A fresh page every day. Press <code>⌘↩</code> on any line to turn it into a task.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 8v9M19 12v5"/></svg></span>
+          <h3>Insights</h3>
+          <p>A week of tasks done and time focused, plus the hours you get the most done.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span>
+          <h3>Reminders sync</h3>
+          <p>Optional two-way sync with a “noNotch” list in Apple Reminders, so tasks reach your iPhone and Apple Watch.</p>
+        </article>
+        <article class="card">
+          <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></span>
+          <h3>Dictation &amp; smart suggestions</h3>
+          <p>Speak a task, recognised on your Mac. On macOS 26, Apple Intelligence suggests a priority and project, on device.</p>
+        </article>
+        <article class="card wide feature-agents">
+          <div class="card-copy">
+            <h3>Works with Claude and Cursor</h3>
+            <p>noNotch has a built-in MCP server. Connect Claude Code, the Claude app or Cursor in one click from Settings, then just ask: “What's on my list today?”, “Plan my day”, “Start a 25-minute focus on my top task.”</p>
+          </div>
+          <div class="visual terminal" aria-hidden="true">
+            <code><span class="prompt">›</span> what's on my noNotch list today?</code>
+            <code class="out">3 tasks · next: Call mom at 5 PM</code>
+            <code><span class="prompt">›</span> start a 25 min focus on it</code>
+            <code class="out ok">Focus running · 25:00</code>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -176,9 +264,9 @@
       <h2>Everything stays on your Mac.</h2>
       <div class="pillars">
         <div><h4>No accounts</h4><p>No sign-up, no tracking, no analytics.</p></div>
-        <div><h4>On-device</h4><p>Notifications, clipboard and notes never leave your Mac.</p></div>
+        <div><h4>On-device</h4><p>Tasks, notes, dictation and suggestions stay on your Mac. Reminders sync only if you turn it on.</p></div>
         <div><h4>Asked once</h4><p>Every permission is explained on first launch. Skip any you don't want.</p></div>
-        <div><h4>Lightweight</h4><p>A 2.7 MB download that idles at about 0% CPU.</p></div>
+        <div><h4>Lightweight</h4><p>A 4.8 MB download that idles at about 0% CPU.</p></div>
       </div>
     </section>
 
@@ -186,9 +274,9 @@
     <section id="download" class="section download">
       <img src="assets/icon_256.png" alt="noNotch app icon" width="128" height="128">
       <h2>Get noNotch</h2>
-      <p class="body">Free. Version 0.1.0 · 2.7 MB · macOS 14 or later · Apple Silicon &amp; Intel.</p>
+      <p class="body">Free. Version 0.2.0 · 4.8 MB · macOS 14 or later · Apple Silicon &amp; Intel. <a class="inline-link" href="changelog.html">What's new</a></p>
       <div class="cta">
-        <a class="button large" href="https://github.com/geniussingare/NoNotch/releases/latest/download/noNotch-0.1.0.dmg">Download .dmg</a>
+        <a class="button large" href="https://github.com/geniussingare/NoNotch/releases/latest/download/noNotch-0.2.0.dmg">Download .dmg</a>
         <a class="button ghost large" href="https://github.com/geniussingare/NoNotch"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg> View source</a>
       </div>
       <figure class="installer">
@@ -196,7 +284,7 @@
         <figcaption>The installer. Drag noNotch onto Applications.</figcaption>
       </figure>
       <ol class="steps">
-        <li><b>Open</b> the downloaded <code>noNotch-0.1.0.dmg</code>.</li>
+        <li><b>Open</b> the downloaded <code>noNotch-0.2.0.dmg</code>.</li>
         <li><b>Drag</b> noNotch onto the Applications folder.</li>
         <li><b>Launch</b> it from Applications and allow the permissions on the welcome screen.</li>
       </ol>
@@ -210,13 +298,15 @@
       <details><summary>Which players are supported?</summary><p>Anything that reports to macOS Now Playing: Apple Music, Spotify, Podcasts, YouTube and Netflix in Safari, Chrome, Arc, Brave or Firefox, plus VLC, IINA and QuickTime.</p></details>
       <details><summary>Why does it need Accessibility?</summary><p>To show volume and brightness in the notch instead of the system HUD, and to mirror notification banners. noNotch only reads what's on screen in those banners; nothing is sent anywhere.</p></details>
       <details><summary>Will it slow my Mac down?</summary><p>No. Animations run on the GPU and services are event-driven, so noNotch sits at about 0% CPU when idle.</p></details>
+      <details><summary>How do I connect Claude or Cursor?</summary><p>Open noNotch Settings → AI agents and click Connect next to Claude Code, the Claude app or Cursor. Desktop apps need a restart, and there's a button for that. Everything runs locally: the MCP server is a small helper inside noNotch.app.</p></details>
+      <details><summary>Does Reminders sync need iCloud?</summary><p>It uses whatever account your Reminders app uses. Turn it on in Settings → Tasks, and noNotch keeps a “noNotch” list in sync both ways. It's off until you switch it on.</p></details>
       <details><summary>How do I quit or uninstall?</summary><p>Use the menu-bar icon → Quit. To uninstall, drag noNotch from Applications to the Trash.</p></details>
     </section>
   </main>
 
   <footer>
     <div class="brand"><img src="assets/icon_256.png" alt="" width="22" height="22"><span>noNotch™</span><span class="maker">by GeniusSoft™</span></div>
-    <p><a href="https://github.com/geniussingare/NoNotch">Source on GitHub</a> · © 2026 GeniusSoft™. noNotch™ is a trademark of GeniusSoft. Now Playing uses <a href="https://github.com/ungive/mediaremote-adapter">mediaremote-adapter</a> (BSD-3-Clause).</p>
+    <p><a href="https://github.com/geniussingare/NoNotch">Source on GitHub</a> · <a href="changelog.html">Changelog</a> · © 2026 GeniusSoft™. noNotch™ is a trademark of GeniusSoft. Now Playing uses <a href="https://github.com/ungive/mediaremote-adapter">mediaremote-adapter</a> (BSD-3-Clause).</p>
   </footer>
 
   <script src="main.js"></script>

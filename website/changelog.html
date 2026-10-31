@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Changelog · noNotch</title>
+  <meta name="author" content="GeniusSoft">
+  <meta name="description" content="What's new in noNotch, version by version.">
+  <meta property="og:title" content="noNotch: your notch, reimagined">
+  <meta property="og:description" content="A Dynamic Island for your Mac. Music, notifications, live activities and quick controls, right in the notch.">
+  <meta property="og:image" content="assets/icon_1024.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon_256.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html#top">
+      <img src="assets/icon_256.png" alt="" width="28" height="28">
+      <span>noNotch</span>
+    </a>
+    <nav>
+      <a href="index.html#productivity">Tasks &amp; Focus</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#displays">Displays</a>
+      <a href="index.html#privacy">Privacy</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="changelog.html" aria-current="page">Changelog</a>
+    </nav>
+    <a class="icon-link" href="https://github.com/geniussingare/NoNotch" aria-label="noNotch on GitHub"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+    <a class="button small" href="index.html#download">Download</a>
+  </header>
+
+  <main id="top" class="changelog">
+    <section class="section log-head">
+      <p class="eyebrow">Changelog</p>
+      <h2>What's new in noNotch</h2>
+      <p class="body">Every release, newest first. <a class="inline-link" href="https://github.com/geniussingare/NoNotch/releases">All downloads on GitHub</a>.</p>
+    </section>
+
+    <article class="release" id="v0.2.0">
+      <header>
+        <h3>0.2.0</h3>
+        <time datetime="2026-10-31">October 31, 2026</time>
+        <span class="tag latest">Latest</span>
+      </header>
+      <p class="summary">Your day, in the notch: tasks, a focus timer, a daily notepad, insights, Apple Reminders sync, and a built-in MCP server for Claude and Cursor.</p>
+
+      <h4>Tasks</h4>
+      <ul>
+        <li><span class="kind new">New</span> <span>A Tasks tab with natural-language entry: “call mom tomorrow at 5pm every week #family !high” sets the day, reminder, repeat, project and priority, previewed as chips while you type.</span></li>
+        <li><span class="kind new">New</span> <span>Task details: priority, project, day, reminder time, repeat, steps and notes.</span></li>
+        <li><span class="kind new">New</span> <span>Repeating tasks: daily, weekdays, weekly on a day, or monthly. Finishing one schedules the next.</span></li>
+        <li><span class="kind new">New</span> <span>Upcoming: a week strip to plan future days, plus Later.</span></li>
+        <li><span class="kind new">New</span> <span>When a reminder is due, the notch opens with a chime and Done / Snooze 5 min.</span></li>
+        <li><span class="kind new">New</span> <span>Unfinished tasks roll forward to today at midnight.</span></li>
+        <li><span class="kind new">New</span> <span>To do / Done switch, double-click to rename, drag to reorder.</span></li>
+      </ul>
+
+      <h4>Focus, notepad and insights</h4>
+      <ul>
+        <li><span class="kind new">New</span> <span>Focus timer as a countdown or stopwatch, with or without a task. Add five minutes, pause, and it waits while your Mac sleeps.</span></li>
+        <li><span class="kind new">New</span> <span>The running timer stays beside the notch, with dotted PAUSED and DONE states.</span></li>
+        <li><span class="kind new">New</span> <span>Ring, digital or minimal clock styles, session length and an optional short break, in Settings → Focus.</span></li>
+        <li><span class="kind new">New</span> <span>A daily notepad page. <code>⌘↩</code> turns the current line into a task.</span></li>
+        <li><span class="kind new">New</span> <span>Insights: tasks done and focus time for the last seven days, peak hours and a weekly summary.</span></li>
+      </ul>
+
+      <h4>Sync, voice and AI</h4>
+      <ul>
+        <li><span class="kind new">New</span> <span>Optional two-way sync with a “noNotch” list in Apple Reminders, reaching iPhone and Apple Watch. Off until you turn it on.</span></li>
+        <li><span class="kind new">New</span> <span>Dictation in the task composer and the notepad, recognised on your Mac.</span></li>
+        <li><span class="kind new">New</span> <span>On macOS 26 with Apple Intelligence, new tasks get a suggested priority and project from the on-device model. Tap to apply, or dismiss.</span></li>
+        <li><span class="kind new">New</span> <span>Built-in MCP server. Settings → AI agents connects Claude Code, the Claude app or Cursor in one click, with a Restart button and “Try asking” prompts.</span></li>
+      </ul>
+
+      <h4>Home and polish</h4>
+      <ul>
+        <li><span class="kind new">New</span> <span>Customizable Home: show, hide, resize and reorder the Clock, Agenda, Focus and Today's Tasks cards.</span></li>
+        <li><span class="kind improved">Improved</span> <span>“Up next” is now Agenda, showing your next event and next task.</span></li>
+        <li><span class="kind new">New</span> <span>A WELCOME BACK greeting beside the notch on launch.</span></li>
+        <li><span class="kind new">New</span> <span>Check for Updates… in the menu bar, and a glass Update button in the notch when a new version is out.</span></li>
+        <li><span class="kind new">New</span> <span>Report a Bug in the menu bar and Settings.</span></li>
+        <li><span class="kind improved">Improved</span> <span>The notch moves out of the way while Settings is open.</span></li>
+        <li><span class="kind improved">Improved</span> <span>Optional Reminders and Microphone permissions on the welcome screen, which you can skip.</span></li>
+        <li><span class="kind fixed">Fixed</span> <span>The notch fits flush at scaled resolutions such as More Space, with no hairline or sliver.</span></li>
+        <li><span class="kind fixed">Fixed</span> <span>With a 12-hour clock, the Home time no longer overlaps the Agenda.</span></li>
+      </ul>
+    </article>
+
+    <article class="release" id="v0.1.0">
+      <header>
+        <h3>0.1.0</h3>
+        <time datetime="2026-10-30">October 30, 2026</time>
+      </header>
+      <p class="summary">First release: a Dynamic Island for the Mac notch.</p>
+      <ul>
+        <li><span class="kind new">New</span> <span>Now Playing for music and video, with live lyrics, AirPlay and ±15 s skips.</span></li>
+        <li><span class="kind new">New</span> <span>Notifications, live activities and a volume and brightness HUD in the notch.</span></li>
+        <li><span class="kind new">New</span> <span>Quick controls, shelf, clipboard, notes, calendar, weather and a camera mirror.</span></li>
+        <li><span class="kind new">New</span> <span>Liquid Glass design, and a pull-cord for displays without a notch.</span></li>
+      </ul>
+    </article>
+  </main>
+
+  <footer>
+    <div class="brand"><img src="assets/icon_256.png" alt="" width="22" height="22"><span>noNotch™</span><span class="maker">by GeniusSoft™</span></div>
+    <p><a href="https://github.com/geniussingare/NoNotch">Source on GitHub</a> · <a href="changelog.html">Changelog</a> · © 2026 GeniusSoft™. noNotch™ is a trademark of GeniusSoft. Now Playing uses <a href="https://github.com/ungive/mediaremote-adapter">mediaremote-adapter</a> (BSD-3-Clause).</p>
+  </footer>
+
+  </body>
+</html>
