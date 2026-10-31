@@ -11,7 +11,13 @@ A GeniusSoft™ product.
 - **Live activities:** charging, low battery, AirPods and Bluetooth, downloads, meetings, focus timer, 20-20-20 eye-break reminders.
 - **Volume & brightness HUD:** replaces the system overlay with a slim bar in the notch.
 - **Quick controls:** Wi‑Fi, Bluetooth, Focus, Dark Mode, Keep Awake, sliders, screenshot, lock and a camera mirror.
-- **Productivity:** file shelf with AirDrop, clipboard history, quick notes, calendar grid with Join buttons, weather.
+- **Tasks:** type naturally ("call mom tomorrow at 5pm every week #family !high") or dictate. Priorities, projects, steps, notes, repeats, an Upcoming planner, and unfinished work rolls forward. When a reminder is due the notch opens with a chime, Snooze and Done.
+- **Focus:** countdown or stopwatch, with or without a task, +5 min, pauses while the Mac sleeps. Ring, digital or minimal clock.
+- **Notepad & Insights:** a daily page where ⌘↩ turns a line into a task; a week of tasks done, focus time and peak hours.
+- **Apple Reminders sync (optional):** two-way with a "noNotch" list, so tasks reach iPhone and Apple Watch.
+- **Apple Intelligence (macOS 26+):** suggested priority and project for new tasks, on device.
+- **AI agents:** a built-in MCP server. Settings → AI agents connects Claude Code, the Claude app or Cursor in one click.
+- **Productivity:** customizable Home cards, file shelf with AirDrop, clipboard history, calendar grid with Join buttons, weather.
 - **Any display:** Macs and monitors without a notch get a pull-cord you tug to open the island.
 
 ## Requirements
@@ -43,6 +49,16 @@ xcodebuild test -scheme noNotch -derivedDataPath build/test
 scripts/visual-check.sh       # screenshots every notch state (needs Screen Recording for your terminal)
 ```
 
+## MCP server
+
+Tasks, notes and insights live in `~/Library/Application Support/noNotch/store.json`. The helper reads and writes it directly (under a file lock), so data tools work even when the app is closed. Focus tools need the app running. To set it up by hand:
+
+```sh
+claude mcp add --scope user nonotch -- "/Applications/noNotch.app/Contents/Helpers/nonotch-mcp"
+```
+
+Tools: `list_tasks`, `add_task`, `update_task`, `complete_task`, `delete_task`, `get_note`, `append_note`, `get_insights`, `focus_start`, `focus_pause`, `focus_resume`, `focus_add_five`, `focus_stop`, `focus_status`.
+
 ## Permissions
 
 All permissions are requested together on first launch, and everything stays on your Mac.
@@ -56,6 +72,8 @@ All permissions are requested together on first launch, and everything stays on 
 | Bluetooth | AirPods and device connections |
 | Automation | Music/Spotify fallback, dark mode toggle |
 | Downloads folder | Download progress |
+| Reminders (optional) | Two-way task sync |
+| Microphone & Speech (optional) | Dictation, recognised on the Mac |
 
 ## Project layout
 
@@ -63,7 +81,9 @@ All permissions are requested together on first launch, and everything stays on 
 - `noNotch/Window`: notch panel, screen geometry, hover and gesture tracking
 - `noNotch/Core`: view model, live-activity queue, services, settings, permissions
 - `noNotch/UI`: island shape, Liquid Glass background, design system, views
-- `noNotch/Features`: Media, Live, QuickSettings, Productivity, Widgets
+- `noNotch/Features`: Media, Live, QuickSettings, Productivity, Tasks, Agents, Widgets
+- `noNotch/Shared`: task model, store file and parser, shared with the MCP helper
+- `noNotchMCP`: `nonotch-mcp`, the stdio MCP server embedded at `noNotch.app/Contents/Helpers`
 - `noNotchTests`: unit and snapshot tests
 - `website`: landing page
 - `scripts`: signing, release, DMG artwork, icon, visual checks

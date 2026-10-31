@@ -17,12 +17,16 @@ enum LiveActivity: Equatable {
     case timerFinished(String)
     case eyeBreak(until: Date)
     case notification(NotificationMirror.Item)
+    case taskDue(id: UUID, title: String)
+    case welcome
 
     /// Higher wins. HUD always replaces whatever is showing.
     var priority: Int {
         switch self {
         case .hud: 100
         case .notification: 85
+        case .taskDue: 82
+        case .welcome: 10
         case .lowBattery: 80
         case .eyeBreak: 75
         case .event: 70
@@ -39,6 +43,7 @@ enum LiveActivity: Equatable {
         case .download(_, _, let finished, _): finished ? .seconds(4) : .seconds(30)
         case .event: .seconds(6)
         case .notification: .seconds(5)
+        case .taskDue: .seconds(10)
         case .eyeBreak(let until): .seconds(max(until.timeIntervalSinceNow, 1))
         default: .seconds(3)
         }
@@ -49,7 +54,8 @@ enum LiveActivity: Equatable {
         switch (self, other) {
         case (.hud, .hud), (.power, .power), (.lowBattery, .lowBattery),
              (.bluetooth, .bluetooth), (.download, .download), (.event, .event),
-             (.timerFinished, .timerFinished), (.eyeBreak, .eyeBreak), (.notification, .notification):
+             (.timerFinished, .timerFinished), (.eyeBreak, .eyeBreak), (.notification, .notification),
+             (.taskDue, .taskDue), (.welcome, .welcome):
             true
         default:
             false

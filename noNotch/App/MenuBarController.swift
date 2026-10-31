@@ -15,9 +15,11 @@ final class MenuBarController: NSObject {
 
         let menu = NSMenu()
         menu.addItem(item("About noNotch", #selector(about), key: ""))
+        menu.addItem(item("Check for Updates…", #selector(checkForUpdates), key: ""))
         menu.addItem(.separator())
         menu.addItem(item("Toggle Notch", #selector(toggle), key: ""))
         menu.addItem(item("Settings…", #selector(settings), key: ","))
+        menu.addItem(item("Report a Bug…", #selector(reportBug), key: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit noNotch", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
@@ -42,4 +44,6 @@ final class MenuBarController: NSObject {
         ])
     }
     @objc private func settings() { onSettings() }
+    @objc private func checkForUpdates() { UpdateChecker.shared.checkInteractively() }
+    @objc private func reportBug() { UpdateChecker.shared.reportBug() }
 }

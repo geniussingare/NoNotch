@@ -26,8 +26,8 @@ struct CollapsedWings: View {
         switch wing {
         case .media:
             MediaThumb(media: services.media, height: 18)
-        case .pomodoro:
-            ProgressRing(pomodoro: services.pomodoro, size: 14, lineWidth: 2)
+        case .focus:
+            ProgressRing(timer: services.focus, size: 14, lineWidth: 2)
         case .activity(let activity):
             ActivityLeading(activity: activity)
         }
@@ -39,12 +39,16 @@ struct CollapsedWings: View {
         case .media:
             Waveform(playing: services.media.isPlaying, palette: services.media.palette, bars: 4)
                 .frame(width: 16, height: 12)
-        case .pomodoro:
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                Text(Format.time(services.pomodoro.remaining(at: context.date)))
-                    .font(Design.number(11))
-                    .foregroundStyle(.orange)
-                    .contentTransition(.numericText(countsDown: true))
+        case .focus:
+            if services.focus.isPaused {
+                DottedLabel(text: "PAUSED", color: .orange)
+            } else {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    Text(Format.time(services.focus.display(at: context.date)))
+                        .font(Design.number(11))
+                        .foregroundStyle(services.focus.phase == .shortBreak ? .green : .orange)
+                        .contentTransition(.numericText(countsDown: services.focus.mode == .countdown))
+                }
             }
         case .activity(let activity):
             ActivityTrailing(activity: activity, accent: viewModel.accent)
@@ -116,6 +120,16 @@ private struct ActivityLeading: View {
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.cyan)
                 .symbolEffect(.pulse)
+        case .welcome:
+            Image(systemName: "hand.wave.fill")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.yellow)
+                .symbolEffect(.bounce, value: true)
+        case .taskDue:
+            Image(systemName: "bell.fill")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.yellow)
+                .symbolEffect(.bounce, value: true)
         case .timerFinished:
             Image(systemName: "timer")
                 .font(.system(size: 12, weight: .semibold))
@@ -181,8 +195,16 @@ private struct ActivityTrailing: View {
                         .contentTransition(.numericText(countsDown: true))
                 }
             }
-        case .timerFinished(let message):
-            Text(message).font(Design.text(10, .medium)).lineLimit(1).minimumScaleFactor(0.7)
+        case .welcome:
+            DottedLabel(text: "WELCOME BACK", color: .white)
+                .minimumScaleFactor(0.6)
+        case .taskDue(_, let title):
+            VStack(alignment: .trailing, spacing: 0) {
+                Text(title).font(Design.text(10, .medium)).lineLimit(1)
+                Text("Due now").font(Design.text(9)).foregroundStyle(.yellow)
+            }
+        case .timerFinished:
+            DottedLabel(text: "DONE", color: .green)
         }
     }
 
@@ -195,7 +217,7 @@ private struct ActivityTrailing: View {
 }
 
 struct ProgressRing: View {
-    let pomodoro: PomodoroTimer
+    let timer: FocusTimer
     let size: CGFloat
     var lineWidth: CGFloat = 2.5
 
@@ -204,8 +226,8 @@ struct ProgressRing: View {
             ZStack {
                 Circle().stroke(.white.opacity(0.18), lineWidth: lineWidth)
                 Circle()
-                    .trim(from: 0, to: pomodoro.progress(at: context.date))
-                    .stroke(pomodoro.phase == .shortBreak ? Color.green : .orange, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .trim(from: 0, to: timer.progress(at: context.date))
+                    .stroke(timer.phase == .shortBreak ? Color.green : .orange, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
             }
         }

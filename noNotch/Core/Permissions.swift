@@ -14,6 +14,11 @@ enum PermissionKind: String, CaseIterable, Identifiable {
     case bluetooth
     case automation
     case downloads
+    case reminders
+    case microphone
+
+    /// Optional permissions can be skipped; "Allow All" leaves them alone.
+    var isOptional: Bool { self == .reminders || self == .microphone }
 
     var id: String { rawValue }
 
@@ -26,6 +31,8 @@ enum PermissionKind: String, CaseIterable, Identifiable {
         case .bluetooth: "Bluetooth"
         case .automation: "Automation"
         case .downloads: "Downloads Folder"
+        case .reminders: "Reminders"
+        case .microphone: "Microphone & Speech"
         }
     }
 
@@ -38,6 +45,8 @@ enum PermissionKind: String, CaseIterable, Identifiable {
         case .bluetooth: "AirPods and device connections"
         case .automation: "Music/Spotify control and dark mode"
         case .downloads: "Download progress"
+        case .reminders: "Optional: sync tasks to iPhone and Apple Watch"
+        case .microphone: "Optional: dictate tasks and notes, recognised on this Mac"
         }
     }
 
@@ -50,6 +59,8 @@ enum PermissionKind: String, CaseIterable, Identifiable {
         case .bluetooth: "dot.radiowaves.left.and.right"
         case .automation: "gearshape.2.fill"
         case .downloads: "arrow.down.circle.fill"
+        case .reminders: "checklist"
+        case .microphone: "mic.fill"
         }
     }
 
@@ -62,6 +73,8 @@ enum PermissionKind: String, CaseIterable, Identifiable {
         case .bluetooth: .systemBlue
         case .automation: .systemGray
         case .downloads: .systemTeal
+        case .reminders: .systemOrange
+        case .microphone: .systemRed
         }
     }
 }
@@ -84,7 +97,7 @@ final class Permissions: NSObject {
         refresh()
     }
 
-    var allGranted: Bool { granted.count == PermissionKind.allCases.count }
+    var allGranted: Bool { PermissionKind.allCases.allSatisfy { $0.isOptional || granted.contains($0) } }
 
     func isGranted(_ kind: PermissionKind) -> Bool { granted.contains(kind) }
 
@@ -97,6 +110,8 @@ final class Permissions: NSObject {
         if CBManager.authorization == .allowedAlways { result.insert(.bluetooth) }
         if automationGranted { result.insert(.automation) }
         if Self.canReadDownloads { result.insert(.downloads) }
+        if EKEventStore.authorizationStatus(for: .reminder) == .fullAccess { result.insert(.reminders) }
+        if Dictation.isAuthorized { result.insert(.microphone) }
         granted = result
     }
 
@@ -118,13 +133,17 @@ final class Permissions: NSObject {
             automationGranted = await Self.requestAutomation()
         case .downloads:
             _ = Self.canReadDownloads
+        case .reminders:
+            _ = try? await EKEventStore().requestFullAccessToReminders()
+        case .microphone:
+            _ = await Dictation.authorize()
         }
         refresh()
     }
 
     /// Walks every missing permission in order, waiting for each prompt.
     func requestAll() async {
-        for kind in PermissionKind.allCases where !isGranted(kind) {
+        for kind in PermissionKind.allCases where !isGranted(kind) && !kind.isOptional {
             await request(kind)
             // Give each system prompt a moment so they don't stack.
             try? await Task.sleep(for: .milliseconds(600))
@@ -140,6 +159,8 @@ final class Permissions: NSObject {
         case .bluetooth: "Privacy_Bluetooth"
         case .automation: "Privacy_Automation"
         case .downloads: "Privacy_FilesAndFolders"
+        case .reminders: "Privacy_Reminders"
+        case .microphone: "Privacy_Microphone"
         }
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")!)
     }

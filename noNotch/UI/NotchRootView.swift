@@ -6,6 +6,8 @@ struct NotchRootView: View {
     @AppStorage(SettingsKey.theme) private var theme = SettingsDefaults.theme
     // Observed so the shape re-measures when the user changes Panel size.
     @AppStorage(SettingsKey.panelScale) private var panelScale = SettingsDefaults.panelScale
+    // Observed so Home re-measures when its cards change.
+    @AppStorage(SettingsKey.homeCards) private var homeCards = Data()
 
     var body: some View {
         if viewModel.showsPullCord {
@@ -62,6 +64,7 @@ struct NotchRootView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .animation(NotchViewModel.spring, value: theme)
         .animation(NotchViewModel.spring, value: panelScale)
+        .animation(NotchViewModel.spring, value: homeCards)
         .onChange(of: panelScale) { viewModel.expand() }
         .animation(NotchViewModel.spring, value: viewModel.wing)
         .animation(NotchViewModel.spring, value: viewModel.isDropTargeted)

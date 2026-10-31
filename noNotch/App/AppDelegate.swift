@@ -14,12 +14,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Unit tests run inside the app; don't start services, windows or prompts.
         guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
         services.start()
+        UpdateChecker.shared.start()
         handleTerminationSignal()
-        viewModel.openSettings = { [weak self] in self?.settingsWindow.show() }
+        viewModel.openSettings = { [weak self] in self?.showSettings() }
         notchController = NotchWindowController(viewModel: viewModel)
         menuBar = MenuBarController(
             onToggle: { [weak self] in self?.viewModel.toggle() },
-            onSettings: { [weak self] in self?.settingsWindow.show() }
+            onSettings: { [weak self] in self?.showSettings() }
         )
         hotKey = GlobalHotKey { [weak self] in self?.viewModel.toggle() }
 
@@ -36,6 +37,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             UserDefaults.standard.set(true, forKey: "didOnboard")
             settingsWindow.showOnboarding()
         }
+    }
+
+    /// The notch gets out of the way while Settings is open.
+    private func showSettings() {
+        viewModel.collapse()
+        settingsWindow.show()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

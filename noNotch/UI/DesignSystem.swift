@@ -276,6 +276,28 @@ struct MarqueeText: View {
     }
 }
 
+// MARK: - Dotted label
+
+/// Status words in the wings (PAUSED, DONE, WELCOME BACK): tiny, wide-tracked, dot-matrix flavoured.
+struct DottedLabel: View {
+    let text: String
+    var color: Color = .white
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 9, weight: .heavy, design: .monospaced))
+            .tracking(1.2)
+            .foregroundStyle(color)
+            .lineLimit(1)
+            .mask {
+                // Fine horizontal scanlines give the dot-matrix look.
+                VStack(spacing: 0.8) {
+                    ForEach(0..<8, id: \.self) { _ in Rectangle().frame(height: 1.4) }
+                }
+            }
+    }
+}
+
 // MARK: - Formatting
 
 enum Format {

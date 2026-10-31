@@ -23,6 +23,12 @@ targets:
     dependencies:
       - target: MediaRemoteAdapter
         embed: true
+      - target: noNotchMCP
+        embed: true
+        codeSign: true
+        copy:
+          destination: wrapper
+          subpath: Contents/Helpers
     info:
       path: noNotch/Info.plist
       properties:
@@ -39,6 +45,10 @@ targets:
         NSLocationUsageDescription: noNotch shows the weather where you are.
         NSLocationWhenInUseUsageDescription: noNotch shows the weather where you are.
         NSCameraUsageDescription: noNotch shows a quick mirror so you can check yourself before a call.
+        NSRemindersFullAccessUsageDescription: noNotch can keep your tasks in sync with a noNotch list in Reminders, so they reach your iPhone and Apple Watch.
+        NSRemindersUsageDescription: noNotch can keep your tasks in sync with a noNotch list in Reminders, so they reach your iPhone and Apple Watch.
+        NSMicrophoneUsageDescription: noNotch listens only while you dictate a task or note.
+        NSSpeechRecognitionUsageDescription: noNotch turns your dictation into text, on this Mac when possible.
     entitlements:
       path: noNotch/noNotch.entitlements
       properties:
@@ -47,6 +57,7 @@ targets:
         com.apple.security.personal-information.calendars: true
         com.apple.security.personal-information.location: true
         com.apple.security.device.camera: true
+        com.apple.security.device.audio-input: true
     scheme:
       testTargets:
         - noNotchTests
@@ -94,4 +105,17 @@ targets:
         GCC_WARN_INHIBIT_ALL_WARNINGS: YES
         OTHER_LDFLAGS: -framework Foundation -framework AppKit -framework UniformTypeIdentifiers
         DEFINES_MODULE: NO
+        SKIP_INSTALL: YES
+  noNotchMCP:
+    type: tool
+    platform: macOS
+    sources:
+      - path: noNotchMCP
+      - path: noNotch/Shared
+    settings:
+      base:
+        PRODUCT_NAME: nonotch-mcp
+        PRODUCT_BUNDLE_IDENTIFIER: com.ganeshsingare.noNotch.mcp
+        SWIFT_VERSION: "6.0"
+        SWIFT_STRICT_CONCURRENCY: complete
         SKIP_INSTALL: YES

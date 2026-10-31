@@ -176,9 +176,9 @@ final class NotchViewModelTests: XCTestCase {
     }
 
     func testTabsFitBesideTheNotch() {
-        // Six 17pt tabs + spacing must fit the strip left of a 185pt notch at 440pt wide.
+        // Seven 15pt tabs must fit the strip left of a 185pt notch at 440pt wide.
         let available = (440 - 185 - 8) / 2 - 14
-        let needed = CGFloat(NotchTab.barTabs.count) * 17 + CGFloat(NotchTab.barTabs.count - 1)
+        let needed = CGFloat(NotchTab.barTabs.count) * 15
         XCTAssertLessThanOrEqual(needed, CGFloat(available))
     }
 }
@@ -312,5 +312,199 @@ final class AllTabsSnapshotTests: XCTestCase {
                 try png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("tab-\(tab.rawValue).png"))
             }
         }
+    }
+}
+
+// MARK: - Tasks
+
+final class TaskParserTests: XCTestCase {
+    private let calendar = Calendar.current
+
+    func testDateTimePriorityAndProject() throws {
+        let now = Date()
+        let parsed = TaskParser.parse("call mom tomorrow at 5pm #family !high", now: now)
+        XCTAssertEqual(parsed.title, "Call mom")
+        XCTAssertEqual(parsed.project, "family")
+        XCTAssertEqual(parsed.priority, .high)
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))!
+        XCTAssertEqual(parsed.day, tomorrow)
+        let due = try XCTUnwrap(parsed.due)
+        XCTAssertEqual(calendar.component(.hour, from: due), 17)
+    }
+
+    func testDayWithoutTimeHasNoReminder() {
+        let parsed = TaskParser.parse("pay rent tomorrow")
+        XCTAssertEqual(parsed.title, "Pay rent")
+        XCTAssertNotNil(parsed.day)
+        XCTAssertNil(parsed.due)
+    }
+
+    func testRepeats() {
+        XCTAssertEqual(TaskParser.parse("water plants every day").repeatRule, .daily)
+        XCTAssertEqual(TaskParser.parse("standup every weekday").repeatRule, .weekdays)
+        XCTAssertEqual(TaskParser.parse("rent monthly").repeatRule, .monthly)
+        let gym = TaskParser.parse("gym every monday")
+        XCTAssertEqual(gym.repeatRule, .weekly([2]))
+        XCTAssertEqual(gym.title, "Gym")
+        XCTAssertEqual(gym.day.map { calendar.component(.weekday, from: $0) }, 2)
+    }
+
+    func testPriorityShorthands() {
+        XCTAssertEqual(TaskParser.parse("a p1").priority, .high)
+        XCTAssertEqual(TaskParser.parse("a !!").priority, .medium)
+        XCTAssertEqual(TaskParser.parse("a !low").priority, .low)
+        XCTAssertNil(TaskParser.parse("wow!").priority)
+    }
+
+    func testRemindMePrefixAndPlainText() {
+        XCTAssertEqual(TaskParser.parse("remind me to stretch").title, "Stretch")
+        let plain = TaskParser.parse("buy milk")
+        XCTAssertEqual(plain.title, "Buy milk")
+        XCTAssertFalse(plain.hasMetadata)
+    }
+}
+
+final class StoreDataTests: XCTestCase {
+    private let calendar = Calendar.current
+
+    func testRollOverMovesUnfinishedWork() {
+        var data = StoreData()
+        let now = Date()
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: now))!
+        var open = TaskItem(title: "open"); open.day = yesterday
+        var done = TaskItem(title: "done"); done.day = yesterday; done.done = yesterday
+        data.tasks = [open, done]
+        XCTAssertTrue(data.rollOver(now: now))
+        XCTAssertEqual(data.task(open.id)?.day, calendar.startOfDay(for: now))
+        XCTAssertEqual(data.task(done.id)?.day, yesterday, "finished tasks stay where they were")
+        XCTAssertEqual(data.todayTasks(now).map(\.id), [open.id])
+    }
+
+    func testCompletingRepeatSpawnsNext() {
+        var data = StoreData()
+        let now = Date()
+        let today = calendar.startOfDay(for: now)
+        let added = data.add(ParsedTask(title: "water", day: today, due: calendar.date(bySettingHour: 9, minute: 30, second: 0, of: today), repeatRule: .daily), now: now)
+        data.setDone(added.id, true, now: now)
+        XCTAssertEqual(data.tasks.count, 2)
+        let next = data.tasks.first { !$0.isDone }!
+        XCTAssertEqual(next.day, calendar.date(byAdding: .day, value: 1, to: today))
+        XCTAssertEqual(next.due.map { calendar.component(.minute, from: $0) }, 30)
+        XCTAssertEqual(next.repeatRule, .daily)
+        XCTAssertNil(data.task(added.id)?.repeatRule)
+    }
+
+    func testMoveReorders() {
+        var data = StoreData()
+        let a = data.add(ParsedTask(title: "a")), b = data.add(ParsedTask(title: "b")), c = data.add(ParsedTask(title: "c"))
+        data.move(c.id, before: a.id)
+        XCTAssertEqual(data.todayTasks().map(\.title), ["c", "a", "b"])
+        _ = b
+    }
+
+    func testFileRoundTripAndLockedUpdate() {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let file = StoreFile(url: dir.appendingPathComponent("store.json"))
+        let (saved, task) = file.update { $0.add(ParsedTask(title: "persist", priority: .high)) }
+        XCTAssertEqual(file.load(), saved)
+        XCTAssertEqual(file.load().task(task.id)?.priority, .high)
+        try? FileManager.default.removeItem(at: dir)
+    }
+}
+
+// MARK: - Focus, insights, home layout
+
+@MainActor
+final class FocusTimerTests: XCTestCase {
+    func testCountdownAddFiveAndPause() {
+        let timer = FocusTimer()
+        timer.start(minutes: 10)
+        XCTAssertTrue(timer.isRunning)
+        timer.addFiveMinutes()
+        XCTAssertEqual(timer.remaining(at: Date()), 15 * 60, accuracy: 2)
+        timer.pause()
+        XCTAssertTrue(timer.isPaused)
+        let paused = timer.remaining(at: Date())
+        XCTAssertEqual(timer.remaining(at: Date().addingTimeInterval(120)), paused, "paused time doesn't move")
+        timer.resume()
+        XCTAssertTrue(timer.isRunning)
+        timer.reset()
+        XCTAssertFalse(timer.isActive)
+    }
+
+    func testStopwatchCountsUp() {
+        let timer = FocusTimer()
+        timer.start(mode: .stopwatch)
+        XCTAssertEqual(timer.display(at: Date().addingTimeInterval(90)), 90, accuracy: 2)
+        timer.addFiveMinutes()
+        XCTAssertEqual(timer.display(at: Date().addingTimeInterval(90)), 90, accuracy: 2, "+5 only applies to countdowns")
+        timer.reset()
+    }
+}
+
+final class InsightsAndLayoutTests: XCTestCase {
+    func testWeekStats() {
+        var data = StoreData()
+        let now = Date()
+        var task = TaskItem(title: "a"); task.done = now
+        var old = TaskItem(title: "old"); old.done = now.addingTimeInterval(-30 * 86400)
+        data.tasks = [task, old]
+        data.sessions = [FocusSession(start: now.addingTimeInterval(-600), duration: 1500)]
+        let stats = InsightStats(data: data, now: now)
+        XCTAssertEqual(stats.days.count, 7)
+        XCTAssertEqual(stats.tasksDone, 1)
+        XCTAssertEqual(stats.focusSeconds, 1500)
+        XCTAssertEqual(stats.days.last?.tasks, 1)
+        XCTAssertNotNil(stats.peakHour)
+    }
+
+    func testHomeWidthFollowsCards() {
+        var cards = HomeCard.defaults
+        let base = HomeCard.panelWidth(cards)
+        cards[3].visible = true
+        XCTAssertGreaterThan(HomeCard.panelWidth(cards), base)
+        XCTAssertLessThanOrEqual(HomeCard.panelWidth(cards.map { var c = $0; c.visible = true; c.wide = true; return c }), 640)
+    }
+}
+
+// MARK: - Reminders mapping & suggestions
+
+@MainActor
+final class RemindersMappingTests: XCTestCase {
+    func testPriorityRoundTrips() {
+        for priority in TaskPriority.allCases {
+            XCTAssertEqual(RemindersSync.priority(fromEventKit: RemindersSync.eventKitPriority(priority)), priority)
+        }
+    }
+
+    func testFieldsIgnoreSeconds() {
+        var task = TaskItem(title: "a")
+        task.due = Date(timeIntervalSinceReferenceDate: 600 + 42)
+        var copy = task
+        RemindersSync.Fields(title: "a", notes: "", done: false, priority: .none, day: nil, due: Date(timeIntervalSinceReferenceDate: 600)).apply(to: &copy)
+        XCTAssertEqual(copy.due, task.due, "a minute-rounded copy must not count as a change")
+    }
+
+    func testDeletingSyncedTaskLeavesTombstone() {
+        var data = StoreData()
+        var task = TaskItem(title: "a"); task.remindersID = "R1"
+        data.tasks = [task]
+        data.delete(task.id)
+        XCTAssertEqual(data.removedReminders, ["R1"])
+    }
+
+    func testEmptySuggestion() {
+        XCTAssertTrue(TaskSuggestion(priority: TaskPriority.none, project: nil).isEmpty)
+        XCTAssertFalse(TaskSuggestion(priority: .high, project: nil).isEmpty)
+    }
+}
+
+@MainActor
+final class UpdateCheckerTests: XCTestCase {
+    func testVersionOrdering() {
+        XCTAssertTrue(UpdateChecker.isNewer("0.10.0", than: "0.9.2"))
+        XCTAssertTrue(UpdateChecker.isNewer("1.0", than: "0.1.0"))
+        XCTAssertFalse(UpdateChecker.isNewer("0.1.0", than: "0.1"))
+        XCTAssertFalse(UpdateChecker.isNewer("0.1.0", than: "0.2.0"))
     }
 }

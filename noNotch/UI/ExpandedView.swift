@@ -15,10 +15,15 @@ struct ExpandedView: View {
                 case .controls: ControlsView(controls: viewModel.services.controls, hudActive: viewModel.services.hudActive) { viewModel.step(to: .mirror) }
                 case .shelf: ShelfView(shelf: viewModel.services.shelf, isTargeted: viewModel.isDropTargeted)
                 case .clipboard: ClipboardView(clipboard: viewModel.services.clipboard)
-                case .notes: NotesView(notes: viewModel.services.notes)
+                case .notes: NotesView(notes: viewModel.services.notes, tasks: viewModel.services.tasks)
                 case .calendar: CalendarGridView(calendar: viewModel.services.calendar) { viewModel.step(to: .home) }
                 case .mirror: MirrorView { viewModel.step(to: .controls) }
                 case .notifications: NotificationsView(mirror: viewModel.services.notifications)
+                case .tasks: TasksView(viewModel: viewModel)
+                case .taskDetail: TaskDetailView(viewModel: viewModel)
+                case .upcoming: UpcomingView(viewModel: viewModel)
+                case .taskDue: TaskDueView(viewModel: viewModel)
+                case .insights: InsightsView(store: viewModel.services.tasks) { viewModel.step(to: .home) }
                 }
             }
             .id(viewModel.tab)
@@ -37,11 +42,32 @@ struct ExpandedView: View {
             TabBar(selection: $viewModel.tab)
                 .fixedSize()
             Spacer(minLength: viewModel.geometry.notchSize.width + 8)
+            if UpdateChecker.shared.updateAvailable {
+                UpdatePill()
+                    .padding(.trailing, 6)
+                    .transition(.scale.combined(with: .opacity))
+            }
             HeaderStatus(services: viewModel.services)
             NotificationBell(mirror: viewModel.services.notifications) { viewModel.step(to: .notifications) }
             IconButton(symbol: "gearshape.fill", size: 10, halo: 20, tint: Design.tertiaryText, action: viewModel.openSettings)
         }
         .padding(.horizontal, 14)
+    }
+}
+
+/// Compact glass "Update" button when a newer release is out.
+private struct UpdatePill: View {
+    var body: some View {
+        Button(action: UpdateChecker.shared.openDownload) {
+            Label("Update", systemImage: "arrow.down.circle.fill")
+                .font(Design.text(9.5, .semibold))
+                .padding(.horizontal, 7)
+                .frame(height: 18)
+                .contentShape(Capsule())
+        }
+        .buttonStyle(PressableStyle())
+        .glassSurface(Capsule(), tint: .blue.opacity(0.45), interactive: true)
+        .help("noNotch \(UpdateChecker.shared.latest ?? "") is available")
     }
 }
 
@@ -84,7 +110,7 @@ struct TabBar: View {
     @Namespace private var indicator
 
     var body: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             ForEach(NotchTab.barTabs) { tab in
                 Button {
                     withAnimation(NotchViewModel.spring) { selection = tab }
@@ -92,7 +118,7 @@ struct TabBar: View {
                     Image(systemName: tab.symbol)
                         .font(.system(size: Design.Icon.small, weight: .semibold))
                         .foregroundStyle(selection == tab ? .white : Design.tertiaryText)
-                        .frame(width: 17, height: 22)
+                        .frame(width: 15, height: 22)
                         .background {
                             if selection == tab {
                                 Capsule()

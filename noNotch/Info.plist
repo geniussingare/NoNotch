@@ -40,5 +40,13 @@
 	<string>noNotch shows the weather where you are.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>noNotch shows the weather where you are.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>noNotch listens only while you dictate a task or note.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>noNotch can keep your tasks in sync with a noNotch list in Reminders, so they reach your iPhone and Apple Watch.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>noNotch can keep your tasks in sync with a noNotch list in Reminders, so they reach your iPhone and Apple Watch.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>noNotch turns your dictation into text, on this Mac when possible.</string>
 </dict>
 </plist>

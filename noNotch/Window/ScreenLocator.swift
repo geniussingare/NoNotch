@@ -21,10 +21,14 @@ enum ScreenLocator {
         if screen.safeAreaInsets.top > 0,
            let left = screen.auxiliaryTopLeftArea,
            let right = screen.auxiliaryTopRightArea {
-            let width = screen.frame.width - left.width - right.width
+            // Scaled modes ("More Space") report fractional points; snap outward to whole pixels
+            // so the island covers the cut-out with no hairline above or sliver below it.
+            let scale = max(screen.backingScaleFactor, 1)
+            let snap = { (value: CGFloat) in (value * scale).rounded(.up) / scale }
+            let width = snap(right.minX - left.maxX)
             return NotchGeometry(
                 screenFrame: screen.frame,
-                notchSize: CGSize(width: width, height: screen.safeAreaInsets.top),
+                notchSize: CGSize(width: width, height: snap(screen.safeAreaInsets.top)),
                 hasNotch: true
             )
         }

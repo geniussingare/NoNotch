@@ -9,6 +9,7 @@ enum NotchState: Equatable {
 
 enum NotchTab: String, CaseIterable, Identifiable {
     case home
+    case tasks
     case media
     case controls
     case notes
@@ -18,14 +19,19 @@ enum NotchTab: String, CaseIterable, Identifiable {
     case calendar
     case mirror
     case notifications
+    case taskDetail
+    case upcoming
+    case taskDue
+    case insights
 
     var id: String { rawValue }
 
-    static let barTabs: [NotchTab] = [.home, .media, .controls, .notes, .shelf, .clipboard]
+    static let barTabs: [NotchTab] = [.home, .tasks, .media, .controls, .notes, .shelf, .clipboard]
 
     var symbol: String {
         switch self {
         case .home: "square.grid.2x2.fill"
+        case .tasks: "checklist"
         case .media: "play.circle.fill"
         case .controls: "switch.2"
         case .notes: "note.text"
@@ -34,6 +40,10 @@ enum NotchTab: String, CaseIterable, Identifiable {
         case .calendar: "calendar"
         case .mirror: "person.crop.square"
         case .notifications: "bell.fill"
+        case .taskDetail: "checklist"
+        case .upcoming: "calendar.day.timeline.left"
+        case .taskDue: "bell.badge.fill"
+        case .insights: "chart.bar.xaxis"
         }
     }
 
@@ -41,12 +51,18 @@ enum NotchTab: String, CaseIterable, Identifiable {
     var contentSize: CGSize {
         switch self {
         case .media: CGSize(width: 440, height: 168)
-        case .home, .controls: CGSize(width: 440, height: 150)
+        case .home: CGSize(width: HomeCard.panelWidth(HomeCard.load()), height: 150)
+        case .controls: CGSize(width: 440, height: 150)
         case .notes: CGSize(width: 440, height: 170)
         case .shelf, .clipboard: CGSize(width: 480, height: 150)
         case .calendar: CGSize(width: 460, height: 196)
         case .mirror: CGSize(width: 340, height: 230)
         case .notifications: CGSize(width: 440, height: 200)
+        case .tasks: CGSize(width: 460, height: 210)
+        case .taskDetail: CGSize(width: 460, height: 236)
+        case .upcoming: CGSize(width: 460, height: 214)
+        case .taskDue: CGSize(width: 400, height: 124)
+        case .insights: CGSize(width: 480, height: 222)
         }
     }
 
@@ -61,6 +77,11 @@ enum NotchTab: String, CaseIterable, Identifiable {
         case .calendar: "Calendar"
         case .mirror: "Mirror"
         case .notifications: "Notifications"
+        case .tasks: "Tasks"
+        case .taskDetail: "Task"
+        case .upcoming: "Upcoming"
+        case .taskDue: "Reminder"
+        case .insights: "Insights"
         }
     }
 }
@@ -68,14 +89,14 @@ enum NotchTab: String, CaseIterable, Identifiable {
 /// What the collapsed notch shows beside the hardware cut-out, if anything.
 enum WingContent: Equatable {
     case activity(LiveActivity)
-    case pomodoro
+    case focus
     case media
 
     /// Width of each side wing.
     var width: CGFloat {
         switch self {
         case .media: 32
-        case .pomodoro: 52
+        case .focus: 52
         case .activity(let activity):
             switch activity {
             case .hud: 60
@@ -84,6 +105,8 @@ enum WingContent: Equatable {
             case .bluetooth: 70
             case .event, .timerFinished: 70
             case .eyeBreak: 64
+            case .taskDue: 70
+            case .welcome: 64
             case .notification: 0
             }
         }
@@ -110,10 +133,29 @@ final class NotchViewModel {
     /// A file drag is over the notch.
     var isDropTargeted = false
 
+    /// Task open in the detail page.
+    var selectedTaskID: UUID?
+    /// Task whose reminder is showing on the Reminder page.
+    var dueTaskID: UUID?
+
     @ObservationIgnored var openSettings: () -> Void = {}
 
     init(services: Services) {
         self.services = services
+        services.onTaskDue = { [weak self] task in self?.presentDue(task) }
+    }
+
+    /// A reminder came due: chime, then open the notch on it.
+    func presentDue(_ task: TaskItem) {
+        NSSound(named: "Glass")?.play()
+        dueTaskID = task.id
+        services.activities.post(.taskDue(id: task.id, title: task.title))
+        expand(to: .taskDue)
+    }
+
+    func showTask(_ id: UUID) {
+        selectedTaskID = id
+        step(to: .taskDetail)
     }
 
     var isExpanded: Bool { state == .expanded }
@@ -124,7 +166,8 @@ final class NotchViewModel {
 
     var wing: WingContent? {
         if let activity = services.activities.current { return .activity(activity) }
-        if services.pomodoro.isRunning { return .pomodoro }
+        // A running or paused focus timer stays beside the notch.
+        if services.focus.isActive { return .focus }
         if services.media.isPlaying, !services.media.isSourceFrontmost { return .media }
         return nil
     }
@@ -222,6 +265,10 @@ final class NotchViewModel {
         if case .activity(.download(_, _, true, _)) = wing { return .shelf }
         if case .activity(.hud) = wing { return .controls }
         if case .activity(.notification) = wing { return .notifications }
+        if case .activity(.taskDue(let id, _)) = wing {
+            dueTaskID = id
+            return .taskDue
+        }
         return services.media.hasMedia ? .media : .home
     }
 }
